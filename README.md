@@ -28,7 +28,8 @@ The `treetide` dir is the monorepo top.
 - `treetide/thirdparty/haskell/BUILD` along with `ghc.nix` define the libraries
   we import from Nix.
 
-- `treetide/haskell/build_defs` contains some Bazel shorthands for declaring common deps.
+- `treetide/haskell/build_defs` contains some Bazel shorthands for declaring
+  common deps.
 
 - `treetide/haskell/extended` contains some extended upstream libs, using
   the extended pattern (thus the name extended... ok you likely get it).
@@ -48,9 +49,9 @@ The `treetide` dir is the monorepo top.
 
 Having nix installed is a prerequisite.
 
-### Building from command StreamedAsne interactively
+### Building from command line interactively
 
-To bu(ild locally while developing) >> pure XmlStream:
+To build locally while developing:
 
   1) Get a nix shell using `nix-shell`.
 
