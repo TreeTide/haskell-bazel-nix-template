@@ -1,0 +1,3 @@
+build --noincompatible_use_python_toolchains
+build --host_platform=@rules_haskell//haskell/platforms:linux_x86_64_nixpkgs
+build --host_javabase='@local_jdk//:jdk'

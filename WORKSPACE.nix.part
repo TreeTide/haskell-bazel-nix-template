@@ -1,0 +1,54 @@
+#
+# The content of file is inserted into WORKSPACE (replacing the part between
+# the cut-marks) when building using bazel-in-nix (that is, via `nix-build -A
+# tests release.nix`).
+#
+# The content sets up the haskell toolchains without requiring rules_nixpkgs,
+# which won't work when inside a nix-build (due to nix-in-nix prohibition).
+#
+# The toolchain directories (`prebuilt_*`) are pre-arranged by release.nix. The
+# bazel rule calls below just replicate what rules_haskell would do with the
+# nix-sourced toolchains.
+#
+
+load("@rules_sh//sh:posix.bzl", "sh_posix_configure")
+# Bring in a "local" toolchain - but since we are in a nix env, these are hermetic.
+sh_posix_configure()
+
+load("@io_tweag_rules_nixpkgs//nixpkgs:nixpkgs.bzl",
+     "nixpkgs_cc_autoconf",
+)
+
+new_local_repository(
+        name = "ghc",
+        path = "prebuilt_ghc",
+        build_file_content = """
+package(default_visibility = ["//visibility:public"])
+filegroup(name = "bin", srcs = glob(["bin/*"]))
+""",
+)
+
+register_toolchains("//:ghc_toolchain")
+
+nixpkgs_cc_autoconf(name = "local_config_cc")
+bind(name = "cc_toolchain", actual = "@local_config_cc//:toolchain")
+register_toolchains("@local_config_cc//:all")
+
+new_local_repository(
+        name = "nixpkgs_cc_toolchain",
+        path = "prebuilt_toolchain",
+        build_file_content = """exports_files(glob(["bin/*"]))""",
+)
+
+new_local_repository(
+    name = "glibc_locales",
+    path = "prebuilt_glibc_locales",
+    build_file_content = """
+package(default_visibility = ["//visibility:public"])
+filegroup(
+    name = "locale-archive",
+    srcs = ["lib/locale/locale-archive"],
+)
+""",
+)
+
